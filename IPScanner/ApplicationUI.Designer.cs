@@ -28,6 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
+            string net_subnetAddress = IPAdressUtils.getDisplayIPAdrress();
+
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ApplicationUI));
             this.radioButton1 = new System.Windows.Forms.RadioButton();
             this.radioButton3 = new System.Windows.Forms.RadioButton();
@@ -100,7 +102,7 @@
             this.textBox1.ReadOnly = true;
             this.textBox1.Size = new System.Drawing.Size(233, 23);
             this.textBox1.TabIndex = 4;
-            this.textBox1.Text = "192.168.10.X:80";
+            this.textBox1.Text = net_subnetAddress.Split('-')[0] + ":80";
             this.textBox1.GotFocus += new System.EventHandler(this.textBox1_GotFocus);
             // 
             // textBox2
@@ -271,6 +273,7 @@
             this.textBox6.Location = new System.Drawing.Point(163, 56);
             this.textBox6.Name = "textBox6";
             this.textBox6.ReadOnly = true;
+            this.textBox6.Text = net_subnetAddress.Split('-')[1];
             this.textBox6.Size = new System.Drawing.Size(233, 23);
             this.textBox6.TabIndex = 12;
             // 

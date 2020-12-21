@@ -13,18 +13,28 @@ namespace IPScanner
     {
         public static IPAddress getLocalIPAddress()
         {
-            var host = Dns.GetHostEntry(Dns.GetHostName());
-            foreach (var ip in host.AddressList)
+            foreach (NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces())
             {
-                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                var addr = ni.GetIPProperties().GatewayAddresses.FirstOrDefault();
+                if (addr != null)
                 {
-                    return ip;
+                    if (ni.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 || ni.NetworkInterfaceType == NetworkInterfaceType.Ethernet)
+                    {
+                        Console.WriteLine(ni.Name);
+                        foreach (UnicastIPAddressInformation ip in ni.GetIPProperties().UnicastAddresses)
+                        {
+                            if (ip.Address.AddressFamily == AddressFamily.InterNetwork)
+                            {
+                                return ip.Address;
+                            }
+                        }
+                    }
                 }
             }
-            throw new Exception("No network adapters with an IPv4 address in the system!");
+            return null;
         }
 
-        public IPAddress getSubnetMaskFromIP(IPAddress address)
+        public static IPAddress getSubnetMaskFromIP(IPAddress address)
         {
             foreach (NetworkInterface adapter in NetworkInterface.GetAllNetworkInterfaces())
             {
@@ -44,11 +54,31 @@ namespace IPScanner
 
         public static string getDisplayIPAdrress()
         {
-            string displayString = "";
+            string displayString = "", displayNetMask = "";
+
+            IPAddress localIpAddress = getLocalIPAddress();
+            byte[] localIpBytes = localIpAddress.GetAddressBytes();
+
+            IPAddress localNetMask = getSubnetMaskFromIP(localIpAddress);
+            byte[] localNetmaskBytes = localNetMask.GetAddressBytes();
 
 
+            for (int i = 0; i < 4; i++)
+            {
+                byte partNet = (byte)(localIpBytes[i] & localNetmaskBytes[i]);
 
-            return displayString;
+                if (partNet == localIpBytes[i])
+                    displayString += partNet + ".";
+                else
+                    displayString += "X" + ".";
+
+                displayNetMask += localNetmaskBytes[i] + ".";
+            }
+
+            displayString = displayString.Remove(displayString.Length - 1, 1);
+            displayNetMask = displayNetMask.Remove(displayNetMask.Length - 1, 1);
+
+            return displayString + "-" + displayNetMask;
         }
     }
 }

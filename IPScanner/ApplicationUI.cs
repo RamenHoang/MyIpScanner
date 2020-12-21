@@ -176,9 +176,9 @@ namespace IPScanner
             text += "\r\nOther connection errors: " + results.Error + "\r\n\r\n";
 
             var validIPS = results.ValidEndPoints.Select(arg => arg.Address.ToString()).Select(Version.Parse)
-    .OrderBy(arg => arg)
-    .Select(arg => arg.ToString())
-    .ToList();
+                .OrderBy(arg => arg)
+                .Select(arg => arg.ToString())
+                .ToList();
             var validPorts = results.ValidEndPoints.Select(arg => arg.Port).ToList();
             validPorts.Sort();
             for (int i = 0; i < validIPS.Count; i++)
