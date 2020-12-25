@@ -1,15 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
 using System.Net.NetworkInformation;
 using System.Threading;
-using System.Windows.Forms;
-using System.IO;
-using System.Diagnostics;
 
 namespace IPScanner
 {
@@ -222,28 +215,26 @@ namespace IPScanner
             IPTestStatus status;
             try
             {
-                using (Socket socket = new Socket(SocketType.Stream, ProtocolType.Tcp))
+                RawSocketPing pinger = null;
+                try
                 {
-                    IAsyncResult result = null;
-                    try
-                    {
-                        result = socket.BeginConnect(address, null, null);
-                        result.AsyncWaitHandle.WaitOne(Timeout, true);
-                        status = socket.Connected ? IPTestStatus.Success : IPTestStatus.Failure;
-                    }
-                    catch
-                    {
-                        throw;
-                    }
-                    finally
-                    {
-                        if (socket.Connected && result != null)
-                        {
-                            socket.EndConnect(result);
-                        }
-                        socket.Close();
-                    }
+                    pinger = new RawSocketPing(
+                        address.AddressFamily,
+                        128,
+                        512,
+                        4,
+                        (ushort)System.Diagnostics.Process.GetCurrentProcess().Id,
+                        Timeout
+                    );
+
+                    pinger.PingAddress = address.Address;
+                    status = pinger.DoPing() ? IPTestStatus.Success : IPTestStatus.Failure;
                 }
+                catch
+                {
+                    throw;
+                }
+
             }
             catch
             {

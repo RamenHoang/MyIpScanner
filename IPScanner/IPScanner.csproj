@@ -52,10 +52,14 @@
     <Compile Include="ApplicationUI.Designer.cs">
       <DependentUpon>ApplicationUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="Formatter.cs" />
-    <Compile Include="IPAdressUtils.cs" />
+    <Compile Include="Utils\Formatter.cs" />
+    <Compile Include="Pinger\IcmpHeader.cs" />
+    <Compile Include="Utils\IPAdressUtils.cs" />
+    <Compile Include="Pinger\Ipv4Header.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Pinger\ProtocolHeader.cs" />
+    <Compile Include="Pinger\RawSocketPing.cs" />
     <Compile Include="Tester.cs" />
     <EmbeddedResource Include="ApplicationUI.resx">
       <DependentUpon>ApplicationUI.cs</DependentUpon>
